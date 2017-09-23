@@ -3,9 +3,12 @@
 import numpy as np
 import math
 
+from timing import *
+
 class EvaluationMeasures(object):
 
     @staticmethod
+    @timing
     def root_mean_square_error(real_data, predicted_data, indexes_by_user):
         value = 0
         n = 0
@@ -19,6 +22,7 @@ class EvaluationMeasures(object):
         return math.sqrt(value/n)
 
     @staticmethod
+    @timing
     def mean_absolute_error(real_data, predicted_data, indexes_by_user):
         value = 0
         n = 0
