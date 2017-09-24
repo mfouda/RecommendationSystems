@@ -2,10 +2,9 @@
 
 import numpy as np
 import math
+import time
 
 from multiprocessing import Pool
-
-from timing import *
 
 class UserBased(object):
     data = None
@@ -14,7 +13,6 @@ class UserBased(object):
     test_indexes_by_user = None
 
     @classmethod
-    @timing
     def create_sets(cls, train_percentage=90, test_percentage=10):
         nonzero = cls.data.nonzero()
         n = len(nonzero[0])
@@ -35,20 +33,23 @@ class UserBased(object):
         cls.test_indexes_by_user = test_indexes
 
     @classmethod
-    @timing
     def create_similarity_matrix(cls, similarity):
         m = cls.data.shape[0]
-        similarity_matrix = np.empty((m, m))
+        similarity_matrix = np.zeros((m, m))
 
+        time1 = time.time()
         args = []
         for i in range(m):
             similarity_matrix[i, i] = 1
             train_indexes_set = set(cls.train_indexes_by_user[i])
             for j in range(i + 1, m):
                 common_indexes = list(train_indexes_set.intersection(cls.train_indexes_by_user[j]))
-                x = cls.data[i, common_indexes].toarray().flatten()
-                y = cls.data[j, common_indexes].toarray().flatten()
+                if not common_indexes:
+                    continue
+                x = cls.data.getrow(i).toarray()[0, common_indexes]
+                y = cls.data.getrow(j).toarray()[0, common_indexes]
                 args.append((i, j, x, y))
+        print("(TIME) Create similarity matrix parameters:", time.time() - time1)
 
         pool = Pool()
         map_result = pool.starmap_async(similarity, args)
@@ -75,10 +76,14 @@ class UserBased(object):
         return i, j, prediction
 
     @classmethod
-    @timing
     def similarity_prediction(cls, similarity, number_of_neighbors):
         shape = cls.data.shape
+
+        time1 = time.time()
         cls.create_similarity_matrix(similarity)
+        print("(TIME) Create similarity matrix:", time.time() - time1)
+
+        time1 = time.time()
 
         args = []
         for i, indexes in enumerate(cls.train_indexes_by_user):
@@ -96,16 +101,16 @@ class UserBased(object):
         for i, j, prediction in results:
             predicted_data[i, j] = prediction
 
+        print("(TIME) Predict data", time.time() - time1)
+
         return predicted_data
 
     @classmethod
-    @timing
     def mean_prediction(cls):
         value = cls.data.sum()/cls.data.count_nonzero()
         return value
 
     @classmethod
-    @timing
     def user_mean_prediction(cls):
         shape = cls.data.shape
         predicted_data = np.empty(shape)
