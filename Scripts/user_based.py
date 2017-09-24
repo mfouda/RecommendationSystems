@@ -40,23 +40,29 @@ class UserBased(object):
         m = cls.data.shape[0]
         similarity_matrix = np.empty((m, m))
 
+        args = []
         for i in range(m):
             similarity_matrix[i, i] = 1
             train_indexes_set = set(cls.train_indexes_by_user[i])
             for j in range(i + 1, m):
                 common_indexes = list(train_indexes_set.intersection(cls.train_indexes_by_user[j]))
-
                 x = cls.data[i, common_indexes].toarray().flatten()
                 y = cls.data[j, common_indexes].toarray().flatten()
+                args.append((i, j, x, y))
 
-                value = similarity(x, y)
-                similarity_matrix[i, j] = value
-                similarity_matrix[j, i] = value
+        pool = Pool()
+        map_result = pool.starmap_async(similarity, args)
+        results = map_result.get()
+        pool.close()
+        pool.join()
+
+        for i, j, value in results:
+            similarity_matrix[i, j] = value
+            similarity_matrix[j, i] = value
 
         cls.similarity_matrix = similarity_matrix
 
     @classmethod
-    @timing
     def predict_entry(cls, i, j, similar_users):
         prediction = 0
         den = 0
@@ -66,23 +72,30 @@ class UserBased(object):
                 den += cls.similarity_matrix[i, user]
         if den != 0:
             prediction /= den
-        if math.isnan(prediction):
-            print("den", den)
-        return prediction
+        return i, j, prediction
 
     @classmethod
     @timing
     def similarity_prediction(cls, similarity, number_of_neighbors):
         shape = cls.data.shape
-        predicted_data = np.empty(shape)
         cls.create_similarity_matrix(similarity)
 
+        args = []
         for i, indexes in enumerate(cls.train_indexes_by_user):
             indexes = set(indexes)
             similar_users = np.argpartition(cls.similarity_matrix[i], -number_of_neighbors)[-number_of_neighbors:]
+            args.extend([(i, j, similar_users) for j in range(shape[1])])
 
-            for j in range(shape[1]):
-                predicted_data[i, j] = cls.predict_entry(i, j, similar_users)
+        pool = Pool()
+        map_result = pool.starmap_async(cls.predict_entry, args)
+        results = map_result.get()
+        pool.close()
+        pool.join()
+
+        predicted_data = np.empty(shape)
+        for i, j, prediction in results:
+            predicted_data[i, j] = prediction
+
         return predicted_data
 
     @classmethod

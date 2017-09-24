@@ -12,7 +12,7 @@ def main():
     np.random.seed(351243)
     np.set_printoptions(linewidth=120, precision=2, threshold=np.nan)
 
-    m = n = 50
+    m = n = 250
     prob = 0.75 # Probabilidad de que haya ceros
 
     data = np.random.randint(1, 6, (m, n))
@@ -27,24 +27,25 @@ def main():
 
     number_of_neighbors = 15
 
-    # predicted_data_correlation = UserBased.similarity_prediction(SimilarityMeasures.pearson_correlation, number_of_neighbors)
+    predicted_data_correlation = UserBased.similarity_prediction(SimilarityMeasures.pearson_correlation, number_of_neighbors)
+    rmse_correlation = EvaluationMeasures.root_mean_square_error(real_data, predicted_data_correlation, UserBased.test_indexes_by_user)
+    print("RMSE Correlation")
+    print(rmse_correlation)
+
     predicted_data_cosine = UserBased.similarity_prediction(SimilarityMeasures.cosine_similarity, number_of_neighbors)
-    # mean_prediction = UserBased.mean_prediction()
-    # user_mean_prediction = UserBased.user_mean_prediction()
-
-    # rmse_correlation = EvaluationMeasures.root_mean_square_error(real_data, predicted_data_correlation, UserBased.test_indexes_by_user)
     rmse_cosine = EvaluationMeasures.root_mean_square_error(real_data, predicted_data_cosine, UserBased.test_indexes_by_user)
-    # rmse_mean = EvaluationMeasures.root_mean_square_error(real_data, mean_prediction, UserBased.test_indexes_by_user)
-    # rmse_user_mean = EvaluationMeasures.root_mean_square_error(real_data, user_mean_prediction, UserBased.test_indexes_by_user)
-
-    # print("RMSE Correlation")
-    # print(rmse_correlation)
     print("RMSE Cosine")
     print(rmse_cosine)
-    # print("RMSE Mean")
-    # print(rmse_mean)
-    # print("RMSE User Mean")
-    # print(rmse_user_mean)
+
+    mean_prediction = UserBased.mean_prediction()
+    rmse_mean = EvaluationMeasures.root_mean_square_error(real_data, mean_prediction, UserBased.test_indexes_by_user)
+    print("RMSE Mean")
+    print(rmse_mean)
+
+    user_mean_prediction = UserBased.user_mean_prediction()
+    rmse_user_mean = EvaluationMeasures.root_mean_square_error(real_data, user_mean_prediction, UserBased.test_indexes_by_user)
+    print("RMSE User Mean")
+    print(rmse_user_mean)
 
     Timing.print_times()
 
