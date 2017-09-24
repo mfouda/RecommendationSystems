@@ -33,6 +33,16 @@ class UserBased(object):
         cls.test_indexes_by_user = test_indexes
 
     @classmethod
+    def calculate_similarity_entry(cls, i, j, indexes_set, similarity):
+        common_indexes = list(indexes_set.intersection(cls.train_indexes_by_user[j]))
+        if not common_indexes:
+            return None
+        x = cls.data.getrow(i).toarray()[0, common_indexes]
+        y = cls.data.getrow(j).toarray()[0, common_indexes]
+        value = similarity(x, y)
+        return i, j, value
+
+    @classmethod
     def create_similarity_matrix(cls, similarity):
         m = cls.data.shape[0]
         similarity_matrix = np.zeros((m, m))
@@ -43,23 +53,19 @@ class UserBased(object):
             similarity_matrix[i, i] = 1
             train_indexes_set = set(cls.train_indexes_by_user[i])
             for j in range(i + 1, m):
-                common_indexes = list(train_indexes_set.intersection(cls.train_indexes_by_user[j]))
-                if not common_indexes:
-                    continue
-                x = cls.data.getrow(i).toarray()[0, common_indexes]
-                y = cls.data.getrow(j).toarray()[0, common_indexes]
-                args.append((i, j, x, y))
-        print("(TIME) Create similarity matrix parameters:", time.time() - time1)
+                args.append((i, j, train_indexes_set, similarity))
 
         pool = Pool()
-        map_result = pool.starmap_async(similarity, args)
+        map_result = pool.starmap_async(cls.calculate_similarity_entry, args)
         results = map_result.get()
         pool.close()
         pool.join()
 
-        for i, j, value in results:
-            similarity_matrix[i, j] = value
-            similarity_matrix[j, i] = value
+        for result in results:
+            if result is not None:
+                i, j, value = result
+                similarity_matrix[i, j] = value
+                similarity_matrix[j, i] = value
 
         cls.similarity_matrix = similarity_matrix
 

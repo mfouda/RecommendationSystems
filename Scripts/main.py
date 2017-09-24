@@ -13,8 +13,8 @@ def main():
     np.random.seed(351243)
     np.set_printoptions(linewidth=120, precision=2, threshold=np.nan)
 
-    m = n = 300
-    prob = 0.8 # Probabilidad de que haya ceros
+    m = n = 500
+    prob = 0.8 # Probability of unobserved values
 
     data = np.random.randint(1, 6, (m, n))
     real_data = data.copy()
@@ -39,7 +39,7 @@ def main():
     predicted_data_cosine = UserBased.similarity_prediction(SimilarityMeasures.cosine_similarity, number_of_neighbors)
     rmse_cosine = EvaluationMeasures.root_mean_square_error(real_data, predicted_data_cosine, UserBased.test_indexes_by_user)
     time2 = time.time()
-    print("(TIME): Cosine prediction", time2 - time1)
+    print("(TIME) Cosine prediction", time2 - time1)
     print("RMSE Cosine:", rmse_cosine)
 
     mean_prediction = UserBased.mean_prediction()
