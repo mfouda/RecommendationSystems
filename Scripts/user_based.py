@@ -124,6 +124,6 @@ class UserBased(object):
         for i in range(shape[0]):
             row = cls.data.getrow(i)
             value = row.sum()/row.count_nonzero()
-            predicted_data[i] = np.repeat(value, shape[0])
+            predicted_data[i] = np.repeat(value, shape[1])
 
         return predicted_data

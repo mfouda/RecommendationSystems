@@ -3,24 +3,33 @@
 import numpy as np
 import scipy.sparse as sparse
 import time
+import arff
 
 from user_based import UserBased
 from similarity_measures import SimilarityMeasures
 from evaluation_measures import EvaluationMeasures
 from timing import Timing
 
+def read_data():
+    data = arff.load(open("../Data/netflix_3m1k/netflix_3m1k.arff", "r"))
+    data = np.array(data["data"])
+    data = data[:, 1:1001]
+    return data.astype(float)
+
 def main():
     np.random.seed(351243)
     np.set_printoptions(linewidth=120, precision=2, threshold=np.nan)
 
-    m = n = 500
-    prob = 0.8 # Probability of unobserved values
+    # m = n = 500
+    # prob = 0.8 # Probability of unobserved values
 
-    data = np.random.randint(1, 6, (m, n))
+    data = read_data()
+
+    # data = np.random.randint(1, 6, (m, n))
     real_data = data.copy()
 
-    mask = np.random.choice([0, 1], (m, n), p=[prob, 1-prob])
-    data = mask*data
+    # mask = np.random.choice([0, 1], (m, n), p=[prob, 1-prob])
+    # data = mask*data
 
     sparse_matrix = sparse.csr_matrix(data)
     UserBased.data = sparse_matrix
