@@ -20,8 +20,8 @@ def main():
     np.random.seed(351243)
     np.set_printoptions(linewidth=120, precision=2, threshold=np.nan)
 
-    m = 250
-    n = 100
+    m = 500
+    n = 350
     prob = 0.8 # Probability of unobserved values
 
     # data = read_data()

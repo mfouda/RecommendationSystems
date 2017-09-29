@@ -15,10 +15,10 @@ class UserBased(object):
 
     @classmethod
     def set_data(cls, data):
-        if type(data) is sparse.csr.csr_matrix:
+        if type(data) is sparse.lil.lil_matrix:
             cls.data = data
         else:
-            cls.data = sparse.csr_matrix(data)
+            cls.data = sparse.lil_matrix(data)
 
     @classmethod
     def create_sets(cls, train_percentage=90, test_percentage=10):
