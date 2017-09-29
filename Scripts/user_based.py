@@ -3,6 +3,7 @@
 import numpy as np
 import math
 import time
+import scipy.sparse as sparse
 
 from multiprocessing import Pool
 
@@ -13,6 +14,13 @@ class UserBased(object):
     test_indexes_by_user = None
 
     @classmethod
+    def set_data(cls, data):
+        if type(data) is sparse.csr.csr_matrix:
+            cls.data = data
+        else:
+            cls.data = sparse.csr_matrix(data)
+
+    @classmethod
     def create_sets(cls, train_percentage=90, test_percentage=10):
         nonzero = cls.data.nonzero()
         n = len(nonzero[0])
@@ -21,7 +29,6 @@ class UserBased(object):
         test_indexes = [[] for _ in range(cls.data.shape[0])]
 
         selected_indexes = np.random.choice(range(n), size=int(n*train_percentage/100), replace=False)
-
         for i, j in zip(nonzero[0][selected_indexes], nonzero[1][selected_indexes]):
             train_indexes[i].append(j)
 
@@ -47,7 +54,6 @@ class UserBased(object):
         m = cls.data.shape[0]
         similarity_matrix = np.zeros((m, m))
 
-        time1 = time.time()
         args = []
         for i in range(m):
             similarity_matrix[i, i] = 1
@@ -113,17 +119,22 @@ class UserBased(object):
 
     @classmethod
     def mean_prediction(cls):
-        value = cls.data.sum()/cls.data.count_nonzero()
-        return value
+        value = 0
+        n = 0
+        for i, indexes in enumerate(cls.train_indexes_by_user):
+            row = cls.data.getrow(i).toarray()[0, indexes]
+            value += row.sum()
+            n += len(row)
+        return value/n
 
     @classmethod
     def user_mean_prediction(cls):
         shape = cls.data.shape
         predicted_data = np.empty(shape)
 
-        for i in range(shape[0]):
-            row = cls.data.getrow(i)
-            value = row.sum()/row.count_nonzero()
+        for i, indexes in enumerate(cls.train_indexes_by_user):
+            row = cls.data.getrow(i).toarray()[0, indexes]
+            value = row.sum()/len(row)
             predicted_data[i] = np.repeat(value, shape[1])
 
         return predicted_data
