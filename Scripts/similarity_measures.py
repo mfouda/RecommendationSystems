@@ -16,6 +16,5 @@ class SimilarityMeasures(object):
     def cosine_similarity(x, y):
         value = np.dot(x, y)
         value /= (np.linalg.norm(x)*np.linalg.norm(y))
-        value = (value + 1)/2
         value = value if not math.isnan(value) else 0
         return value
