@@ -135,6 +135,7 @@ class UserBased(object):
         for i, indexes in enumerate(cls.train_indexes_by_user):
             row = cls.data.getrow(i).toarray()[0, indexes]
             value = row.sum()/len(row)
+            value = value if not math.isnan(value) else 0
             predicted_data[i] = np.repeat(value, shape[1])
 
         return predicted_data
