@@ -4,8 +4,8 @@ import numpy as np
 from user_based import UserBased
 
 class ItemBased(object):
-    train_indexes_by_user = None
-    test_indexes_by_user = None
+    train_indexes = None
+    test_indexes = None
 
     @classmethod
     def set_data(cls, data):
@@ -27,9 +27,9 @@ class ItemBased(object):
         for i, j in zip(nonzero[0][selected_indexes], nonzero[1][selected_indexes]):
             test_indexes[j].append(i)
 
-        cls.train_indexes_by_user = train_indexes
-        cls.test_indexes_by_user = test_indexes
-        UserBased.train_indexes_by_user = train_indexes
+        cls.train_indexes = train_indexes
+        cls.test_indexes = test_indexes
+        UserBased.train_indexes = train_indexes
 
     @classmethod
     def similarity_prediction(cls, similarity, number_of_neighbors):
@@ -41,5 +41,5 @@ class ItemBased(object):
         return UserBased.mean_prediction()
 
     @classmethod
-    def item_mean_prediction(cls):
-        return UserBased.user_mean_prediction().T
+    def row_mean_prediction(cls):
+        return UserBased.row_mean_prediction().T

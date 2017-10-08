@@ -10,8 +10,8 @@ from multiprocessing import Pool
 class UserBased(object):
     data = None
     similarity_matrix = None
-    train_indexes_by_user = None
-    test_indexes_by_user = None
+    train_indexes = None
+    test_indexes = None
 
     @classmethod
     def set_data(cls, data):
@@ -36,12 +36,12 @@ class UserBased(object):
         for i, j in zip(nonzero[0][selected_indexes], nonzero[1][selected_indexes]):
             test_indexes[i].append(j)
 
-        cls.train_indexes_by_user = train_indexes
-        cls.test_indexes_by_user = test_indexes
+        cls.train_indexes = train_indexes
+        cls.test_indexes = test_indexes
 
     @classmethod
     def calculate_similarity_entry(cls, i, j, indexes_set, similarity):
-        common_indexes = list(indexes_set.intersection(cls.train_indexes_by_user[j]))
+        common_indexes = list(indexes_set.intersection(cls.train_indexes[j]))
         if not common_indexes:
             return None
         x = cls.data.getrow(i).toarray()[0, common_indexes]
@@ -57,7 +57,7 @@ class UserBased(object):
         args = []
         for i in range(m):
             similarity_matrix[i, i] = 1
-            train_indexes_set = set(cls.train_indexes_by_user[i])
+            train_indexes_set = set(cls.train_indexes[i])
             for j in range(i + 1, m):
                 args.append((i, j, train_indexes_set, similarity))
 
@@ -98,7 +98,7 @@ class UserBased(object):
         time1 = time.time()
 
         args = []
-        for i, indexes in enumerate(cls.train_indexes_by_user):
+        for i, indexes in enumerate(cls.train_indexes):
             indexes = set(indexes)
             similar_users = np.argpartition(cls.similarity_matrix[i], -number_of_neighbors)[-number_of_neighbors:]
             args.extend([(i, j, similar_users) for j in range(shape[1])])
@@ -121,18 +121,18 @@ class UserBased(object):
     def mean_prediction(cls):
         value = 0
         n = 0
-        for i, indexes in enumerate(cls.train_indexes_by_user):
+        for i, indexes in enumerate(cls.train_indexes):
             row = cls.data.getrow(i).toarray()[0, indexes]
             value += row.sum()
             n += len(row)
         return value/n
 
     @classmethod
-    def user_mean_prediction(cls):
+    def row_mean_prediction(cls):
         shape = cls.data.shape
         predicted_data = np.empty(shape)
 
-        for i, indexes in enumerate(cls.train_indexes_by_user):
+        for i, indexes in enumerate(cls.train_indexes):
             row = cls.data.getrow(i).toarray()[0, indexes]
             value = row.sum()/len(row)
             value = value if not math.isnan(value) else 0

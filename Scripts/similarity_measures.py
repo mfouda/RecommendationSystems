@@ -18,3 +18,17 @@ class SimilarityMeasures(object):
         value /= (np.linalg.norm(x)*np.linalg.norm(y))
         value = value if not math.isnan(value) else 0
         return value
+
+    @staticmethod
+    def mean_squared_difference(x, y):
+        value = np.sum((x - y)**2)/len(x)
+        value = 2/(1 + math.exp(value)) # [0, inf] -> [0, 1] Decreasing
+        value = value if not math.isnan(value) else 0
+        return value
+
+    @staticmethod
+    def mean_absolute_difference(x, y):
+        value = np.sum(np.fabs(x - y))/len(x)
+        value = 2/(1 + math.exp(value)) # [0, inf] -> [0, 1] Decreasing
+        value = value if not math.isnan(value) else 0
+        return value
