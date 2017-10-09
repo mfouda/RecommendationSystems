@@ -52,7 +52,7 @@ def main():
             "Item_based" : ItemBased
             }
 
-    numbers_of_neighbors = [2, 5, 10, 25, 50]
+    numbers_of_neighbors = [10, 25, 50, 100]
     train_percentages = [30, 50, 70, 90]
     test_percentages = [10, 20, 30, 50]
 
