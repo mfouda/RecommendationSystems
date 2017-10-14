@@ -18,7 +18,7 @@ def read_data():
     return lil_matrix
 
 def main():
-    np.random.seed(351243)
+    # np.random.seed(351243)
     np.set_printoptions(linewidth=120, precision=2, threshold=np.nan)
 
     use_netflix_data = True
