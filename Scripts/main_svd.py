@@ -5,7 +5,7 @@ import time
 import pickle
 import matplotlib.pyplot as plt
 
-from svd_methods import SVDMethods as SVD
+from svd_methods import *
 from evaluation_measures import EvaluationMeasures
 
 def read_data():
@@ -18,7 +18,7 @@ def main():
     np.set_printoptions(linewidth=120, precision=2, threshold=np.nan)
 
     # Parameters
-    max_iter = int(1e7)
+    max_iter = int(1e4)
     norm_tol=1e-2
     step_size = 1.0
     regularization_parameter = 1.0
@@ -32,11 +32,11 @@ def main():
         real_data = data.copy()
         mask = np.int8(data > 0)
     else:
-        m = 100
-        n = 150
+        m = 200
+        n = 250
         prob = 0.2 # Probability of unobserved values
         data = np.random.randint(1, 6, (m, n))
-        data = SVD.low_rank_approximation(data, rank)
+        data = low_rank_approximation(data, rank)
         real_data = data.copy()
         mask = np.random.choice([0, 1], (m, n), p=[prob, 1-prob])
         data = mask*data
@@ -48,14 +48,14 @@ def main():
     y0 = np.random.random_integers(0, 6, (rank, n)).astype("float64")
 
     # Alternating Steepest Descent
-    SVD.set_data(data, mask)
-    SVD.create_sets(train_percentage=80, test_percentage=20)
+    # set_data(data, mask)
+    train_indexes, test_indexes = create_sets(data, train_percentage=80, test_percentage=20)
 
     time1 = time.time()
-    predicted_data, residuals = SVD.alternating_steepest_descent(x0, y0, max_iter, norm_tol)
+    predicted_data, residuals = alternating_steepest_descent(x0, y0, data, mask, max_iter, norm_tol)
     print("(TIME) ASD:", time.time() - time1)
 
-    rmse = EvaluationMeasures.root_mean_square_error(real_data, predicted_data, SVD.test_indexes)
+    rmse = EvaluationMeasures.root_mean_square_error(real_data, predicted_data, test_indexes)
     print("(RMSE) ASD:", rmse)
 
     fig, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=150)
@@ -66,11 +66,11 @@ def main():
     # Regularized SVD
 
     # time1 = time.time()
-    # predicted_data, residuals = SVD.regularized_SVD(x0, y0, max_iter, norm_tol, step_size, regularization_parameter)
-    # print("(TIME) SVD Regularized:", time.time() - time1)
+    # predicted_data, residuals = regularized_x0, y0, max_iter, norm_tol, step_size, regularization_parameter)
+    # print("(TIME) Regularized:", time.time() - time1)
     #
-    # rmse = EvaluationMeasures.root_mean_square_error(real_data, predicted_data, SVD.test_indexes)
-    # print("(RMSE) SVD Regularized:", rmse)
+    # rmse = EvaluationMeasures.root_mean_square_error(real_data, predicted_data, SVDMethods.test_indexes)
+    # print("(RMSE) Regularized:", rmse)
     #
     # fig, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=150)
     # ax.semilogy(residuals, linewidth=2.0, linestyle="-", marker="o")
