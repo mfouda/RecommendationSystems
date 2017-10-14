@@ -12,7 +12,7 @@ def set_data(data, mask):
     data = data.astype("float64").copy()
     mask = mask.astype("float64").copy()
 
-def create_sets(data, train_percentage=90, test_percentage=10):
+def create_sets(data, mask, train_percentage=90, test_percentage=10):
     nonzero = data.nonzero()
     n = len(nonzero[0])
 
@@ -23,12 +23,12 @@ def create_sets(data, train_percentage=90, test_percentage=10):
     for i, j in zip(nonzero[0][selected_indexes], nonzero[1][selected_indexes]):
         train_indexes[i].append(j)
 
-    # selected_indexes = set(selected_indexes)
-    # for k in range(n):
-    #     if k not in selected_indexes:
-    #         i, j  = nonzero[0][k], nonzero[1][k]
-    #         data[i, j] = 0
-    #         mask[i, j] = 0
+    selected_indexes = set(selected_indexes)
+    for k in range(n):
+        if k not in selected_indexes:
+            i, j  = nonzero[0][k], nonzero[1][k]
+            data[i, j] = 0
+            mask[i, j] = 0
 
     selected_indexes = np.random.choice(range(n), size=int(n*test_percentage/100), replace=False)
     for i, j in zip(nonzero[0][selected_indexes], nonzero[1][selected_indexes]):
