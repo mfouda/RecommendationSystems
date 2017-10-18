@@ -49,7 +49,7 @@ def main():
 
     # Alternating Steepest Descent
     # set_data(data, mask)
-    train_indexes, test_indexes = create_sets(data, train_percentage=80, test_percentage=20)
+    train_indexes, test_indexes = create_sets(data, mask, train_percentage=80, test_percentage=20)
 
     time1 = time.time()
     predicted_data, residuals = alternating_steepest_descent(x0, y0, data, mask, max_iter, norm_tol)

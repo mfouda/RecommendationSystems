@@ -113,29 +113,24 @@ def alternating_steepest_descent(x0, y0, z0, mask, max_iter, norm_tol):
     norm_z0 = norm(mask*z0)
 
     for num_iter in range(max_iter):
-        grad_x = diff @ y.T
+        print(num_iter)
 
-        scale = np.linalg.inv(y @ y.T)
-        dx = grad_x @ scale
+        grad_x = -diff @ y.T
 
-        delta_xy = mask*(dx @ y)
-        tx = np.trace(dx.T @ grad_x)/norm(delta_xy)**2
-        
-        x = x + tx*dx
-        diff = diff - tx*delta_xy
+        delta_xy = mask*(grad_x@y)
+        tx = (norm(grad_x)/norm(delta_xy))**2
+        x = x - tx*grad_x
 
-        grad_y = x.T @ diff
+        diff = diff + tx*delta_xy
+        grad_y = -x.T @ diff
 
-        scale = np.linalg.inv(x.T @ x)
-        dy = scale @ grad_y
+        delta_xy = mask*(x@grad_y)
+        ty = (norm(grad_y)/norm(delta_xy))**2
+        y = y - ty*grad_y
 
-        delta_xy = mask*(x @ dy)
-        ty = np.trace(dy @ grad_y.T)/norm(delta_xy)**2
-
-        y = y + ty*dy
-        diff = diff - ty*delta_xy
-
+        diff = diff + ty*delta_xy
         residual = norm(diff)/norm_z0
+
         if num_iter % 1000 == 0:
             residuals.append(residual)
 
