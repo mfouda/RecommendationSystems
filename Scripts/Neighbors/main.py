@@ -13,7 +13,7 @@ from evaluation_measures import EvaluationMeasures
 from timing import Timing
 
 def read_data():
-    with open("../Data/netflix_3m1k/lil_matrix.pkl", "rb") as file:
+    with open("../../Data/netflix_3m1k/lil_matrix.pkl", "rb") as file:
         lil_matrix = pickle.load(file)
     return lil_matrix
 
