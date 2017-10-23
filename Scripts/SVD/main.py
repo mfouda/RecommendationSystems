@@ -3,8 +3,8 @@
 import numpy as np
 import cv2
 
+from descent import Descent
 from utils import *
-from descent import *
 
 def main():
     np.random.seed(12345)
@@ -30,7 +30,7 @@ def main():
     m, n = M.shape
     V0 = np.random.rand(n, rank)
 
-    M_approx = optimize(M, V0, mask)
+    M_approx = Descent.optimize(M, V0, mask)
 
     if M_approx is not None:
         rmse_value = rmse(M_original, M_approx, mask)
