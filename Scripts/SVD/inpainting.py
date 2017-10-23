@@ -42,5 +42,9 @@ def main():
     cv2.imshow("masked image", ImageMask.image)
     cv2.imshow("approximated image", image_approx)
 
+    cv2.imwrite("../../Results/Inpainting/original.png", image)
+    cv2.imwrite("../../Results/Inpainting/masked.png", ImageMask.image)
+    cv2.imwrite("../../Results/Inpainting/approximated.png", image_approx)
+
 if __name__ == '__main__':
     main()
