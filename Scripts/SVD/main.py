@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import cv2
+
 from utils import *
 from descent import *
 
 def main():
+    np.random.seed(12345)
     np.set_printoptions(precision=2, threshold=np.inf, linewidth=np.inf, suppress=False)
 
-    use_netflix_data = True
-    rank = 50
+    use_netflix_data = False
+    rank = 10
 
     if use_netflix_data:
         M = read_netflix_data()
@@ -16,7 +19,7 @@ def main():
         M = low_rank_approximation(M, rank)
         mask = (M != 0)
     else:
-        m, n = 400, 100
+        m, n = 200, 100
         density = 0.7
         mask = np.random.choice([True, False], (m, n), p=[density, 1-density])
         M = np.random.randint(1, 6, (m, n))
