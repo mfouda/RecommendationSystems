@@ -4,12 +4,13 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+
 from scipy import misc
 from numpy.linalg import norm
 
 def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
     # Initialize
-    U, s, V = np.linalg.svd(z0, full_matrices=False)
+    U, s, V = np.linalg.svd(mask*z0, full_matrices=False)
     s[rank:] = 0
     x = (U @ np.diag(s))[:,:rank]
     y = V[:rank,:]
@@ -50,12 +51,9 @@ def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
     return x@y, residuals
 
 
-"""
-Es una modificación del algoritmo anterior. Los inputs y outputs son los mismos.
-"""
 def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
     # Initialize
-    U, s, V = np.linalg.svd(z0, full_matrices=False)
+    U, s, V = np.linalg.svd(mask*z0, full_matrices=False)
     s[rank:] = 0
     x = (U @ np.diag(s))[:,:rank]
     y = V[:rank,:]

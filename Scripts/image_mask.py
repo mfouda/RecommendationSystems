@@ -8,7 +8,7 @@ class ImageMask(object):
     mask = None
     drawing = False # True if mouse is pressed
     mask_color = (0, 255, 0)
-    radius = 5
+    radius = 10
     window_name = "ImageMask"
 
     @classmethod
