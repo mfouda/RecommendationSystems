@@ -14,7 +14,7 @@ class Descent(object):
         m, n = M.shape
         m, r = U.shape
         V = V.reshape(n, r)
-        return 0.5 * np.linalg.norm((M - U@V.T)[mask])**2
+        return 0.5 * np.linalg.norm((M - U@V.T)[mask])**2 # Regularizar
 
     @classmethod
     def der_U(cls, M, U, V, mask):
