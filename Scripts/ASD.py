@@ -4,11 +4,14 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+import time
 
 from scipy import misc
 from numpy.linalg import norm
 
 def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
+    begin = time.time()
+
     # Initialize
     U, s, V = np.linalg.svd(mask*z0, full_matrices=False)
     s[rank:] = 0
@@ -39,24 +42,31 @@ def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
 
         diff = diff + ty*delta_xy
         residual = norm(diff)/norm_z0
-        print(num_iter, residual)
+        # print(num_iter, residual)
 
         if num_iter % 1000 == 0:
             residuals.append(residual)
 
         if residual < norm_tol:
-            print("norm_tol alcanzada", residual)
             break
+
+    print("Algoritmo: ASD")
+    print("Tiempo:", time.time() - begin)
+    print("Iteraciones:", num_iter)
+    print("Error relativo:", residual)
 
     return x@y, residuals
 
 
 def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
+    begin = time.time()
+
     # Initialize
     U, s, V = np.linalg.svd(mask*z0, full_matrices=False)
+    s = np.sqrt(s)
     s[rank:] = 0
     x = (U @ np.diag(s))[:,:rank]
-    y = V[:rank,:]
+    y = (np.diag(s) @ V)[:rank,:]
 
     xy = x@y
     diff = mask*(z0 - xy)
@@ -89,13 +99,17 @@ def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
 
         residual = norm(diff)/norm_z0
 
+        # print(num_iter, residual)
+
         if num_iter % 1000 == 0:
             residuals.append(residual)
 
-        print(num_iter, residual)
-
         if residual < norm_tol:
-            print("norm_tol alcanzada", residual)
             break
+
+    print("Algoritmo: sASD")
+    print("Tiempo:", time.time() - begin)
+    print("Iteraciones:", num_iter)
+    print("Error relativo:", residual)
 
     return x@y, residuals

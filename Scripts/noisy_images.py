@@ -24,9 +24,7 @@ def main():
     else:
         algorithm = "ASD"
 
-    print("algorithm:", algorithm)
-
-    image = cv2.imread("../Data/Images/balloons.jpeg")
+    image = cv2.imread("../Data/Images/boat.png")
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.normalize(image, image, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
 
@@ -35,7 +33,7 @@ def main():
     m, n = image.shape
 
     # Aproximación de rango bajo
-    rank = 50
+    rank = 30
     low_rank_image = low_rank_approximation(image, rank)
 
     # Máscara
