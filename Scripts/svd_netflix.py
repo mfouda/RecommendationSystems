@@ -20,24 +20,26 @@ def main():
         algorithm = "ASD"
 
     data = utils.read_netflix_data()
-    mask = (data != 0).astype(np.uint8)
+    mask = (data != 0)
 
-    data[~mask] = data[mask].mean() # Llenar la información desconocida con la media de la conocida
+    print("data shape:", data.shape)
+    print("data density:", mask.sum()/data.size)
 
-    rank = 800
+    rank = 50
     iter_max = 10000
     norm_tol = 1e-4
 
     if algorithm == "sASD":
-        completed_data, residuals = ASD.scaled_alternating_steepest_descent(data, rank, mask, iter_max, norm_tol)
+        minimize = ASD.scaled_alternating_steepest_descent
     else: # ASD
-        completed_data, residuals = ASD.alternating_steepest_descent(data, rank, mask, iter_max, norm_tol)
+        minimize = ASD.alternating_steepest_descent
+
+    results = minimize(data, rank, mask, iter_max, norm_tol, verbose=True)
+    completed_data = results.matrix
 
     rmse = utils.rmse(data, completed_data, mask)
-    print("RMSE:", rmse)
 
-    sns.distplot(completed_data.flatten(), kde=False)
-    plt.show()
+    print("RMSE:", rmse)
 
 if __name__ == '__main__':
     main()

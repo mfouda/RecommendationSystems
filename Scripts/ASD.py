@@ -7,6 +7,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
+import utils
 
 from scipy import misc
 from numpy.linalg import norm
@@ -55,9 +56,13 @@ def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol, verbose=Fal
         if residual < norm_tol:
             break
 
+    xy = x@y
     asd_time = time.time() - begin
-    Result = namedtuple("Result", ["algorithm", "matrix", "time", "residual", "num_iterations"])
-    result = Result(algorithm="ASD", matrix=x@y, time=asd_time, residual=residual, num_iterations=num_iter)
+
+    rmse = utils.rmse(z0, xy, mask)
+
+    Result = namedtuple("Result", ["algorithm", "matrix", "time", "residual", "num_iterations", "rmse"])
+    result = Result(algorithm="ASD", matrix=x@y, time=asd_time, residual=residual, num_iterations=num_iter+1, rmse=rmse)
 
     if verbose:
         print("Algoritmo: ASD")
@@ -118,9 +123,13 @@ def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol, verb
         if residual < norm_tol:
             break
 
+    xy = x@y
     asd_time = time.time() - begin
-    Result = namedtuple("Result", ["algorithm", "matrix", "time", "residual", "num_iterations"])
-    result = Result(algorithm="sASD", matrix=x@y, time=asd_time, residual=residual, num_iterations=num_iter)
+
+    rmse = utils.rmse(z0, xy, mask)
+
+    Result = namedtuple("Result", ["algorithm", "matrix", "time", "residual", "num_iterations", "rmse"])
+    result = Result(algorithm="sASD", matrix=xy, time=asd_time, residual=residual, num_iterations=num_iter+1, rmse=rmse)
 
     if verbose:
         print("Algoritmo: sASD")
