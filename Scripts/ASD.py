@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import cv2
+import time
+
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-import matplotlib.pyplot as plt
-import time
 
 from scipy import misc
 from numpy.linalg import norm
+from collections import namedtuple
 
-def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
+def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol, verbose=False):
     begin = time.time()
 
     # Initialize
@@ -42,7 +45,9 @@ def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
 
         diff = diff + ty*delta_xy
         residual = norm(diff)/norm_z0
-        # print(num_iter, residual)
+
+        if verbose:
+            print(num_iter, residual)
 
         if num_iter % 1000 == 0:
             residuals.append(residual)
@@ -50,15 +55,20 @@ def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
         if residual < norm_tol:
             break
 
-    print("Algoritmo: ASD")
-    print("Tiempo:", time.time() - begin)
-    print("Iteraciones:", num_iter)
-    print("Error relativo:", residual)
+    asd_time = time.time() - begin
+    Result = namedtuple("Result", ["algorithm", "matrix", "time", "residual", "num_iterations"])
+    result = Result(algorithm="ASD", matrix=x@y, time=asd_time, residual=residual, num_iterations=num_iter)
 
-    return x@y, residuals
+    if verbose:
+        print("Algoritmo: ASD")
+        print("Tiempo:", asd_time)
+        print("Iteraciones:", num_iter)
+        print("Error relativo:", residual)
+
+    return result
 
 
-def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
+def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol, verbose=False):
     begin = time.time()
 
     # Initialize
@@ -99,7 +109,8 @@ def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
 
         residual = norm(diff)/norm_z0
 
-        # print(num_iter, residual)
+        if verbose:
+            print(num_iter, residual)
 
         if num_iter % 1000 == 0:
             residuals.append(residual)
@@ -107,9 +118,14 @@ def scaled_alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol):
         if residual < norm_tol:
             break
 
-    print("Algoritmo: sASD")
-    print("Tiempo:", time.time() - begin)
-    print("Iteraciones:", num_iter)
-    print("Error relativo:", residual)
+    asd_time = time.time() - begin
+    Result = namedtuple("Result", ["algorithm", "matrix", "time", "residual", "num_iterations"])
+    result = Result(algorithm="sASD", matrix=x@y, time=asd_time, residual=residual, num_iterations=num_iter)
 
-    return x@y, residuals
+    if verbose:
+        print("Algoritmo: sASD")
+        print("Tiempo:", asd_time)
+        print("Iteraciones:", num_iter)
+        print("Error relativo:", residual)
+
+    return result

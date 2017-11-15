@@ -20,9 +20,9 @@ def rmse(M, M_approx, mask):
 def read_netflix_data(format=None):
     # Rank = 883
     if format == "lil":
-        file_path = "../../Data/netflix_3m1k/lil_matrix.pkl"
+        file_path = "../Data/netflix_3m1k/lil_matrix.pkl"
     else:
-        file_path = "../../Data/netflix_3m1k/matrix.pkl"
+        file_path = "../Data/netflix_3m1k/matrix.pkl"
     with open(file_path, "rb") as file:
         matrix = pickle.load(file)
     return matrix
