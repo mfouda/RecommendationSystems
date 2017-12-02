@@ -1,0 +1,3 @@
+Algorithm,Density,Rank,Shape,Num_iterations,Train_error,Test_error,Full_error,Time,Data
+sASD,0.4,50,"(512, 512)",1552,9.98901135077e-05,0.00127338858943,0.000958447774188,22.58310842514038,nature-sunflower-plants-summer-597039.jpeg
+sASD,0.4,50,"(512, 512)",2454,9.94884548103e-05,0.000403772383007,0.00102144965207,37.514458417892456,pexels-photo-341109.jpeg

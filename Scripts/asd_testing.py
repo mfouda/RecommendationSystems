@@ -28,7 +28,7 @@ def parse_args():
     argparser.add_argument("-r", "--rank", action="store", type=int)
     argparser.add_argument("-n", "--netflix", action="store_true", default=False)
     argparser.add_argument("-d", "--data", action="store", default="boat.png")
-    argparser.add_argument("-i", "--iter", action="store", type=int, default=10000)
+    argparser.add_argument("-i", "--iter", action="store", type=int, default=20000)
     argparser.add_argument("-o", "--out", action="store", default="Results.csv")
     argparser.add_argument("-v", "--verbose", action="store_true", default=False)
     return argparser.parse_args()

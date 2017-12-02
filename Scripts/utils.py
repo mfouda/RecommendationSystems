@@ -17,8 +17,14 @@ def rmse(M, M_approx, mask):
     mask = mask.astype(np.bool)
     return math.sqrt(((M - M_approx)**2)[mask].mean())
 
+def relative_error(X, X0, mask=None):
+    if mask is not None:
+        error = np.linalg.norm(mask*(X - X0))/np.linalg.norm(mask*X0)
+    else:
+        error = np.linalg.norm(X - X0)/np.linalg.norm(X0)
+    return error
+
 def read_netflix_data(format=None):
-    # Rank = 883
     if format == "lil":
         file_path = "../Data/netflix_3m1k/lil_matrix.pkl"
     else:

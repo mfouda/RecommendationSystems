@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import cv2
 import functools
 import sys
 
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 
 import ASD
+import utils
+
 from user_based import UserBased
 from similarity_measures import SimilarityMeasures
-from utils import low_rank_approximation
 
 def main():
     if len(sys.argv) > 1:
@@ -20,7 +21,7 @@ def main():
     else:
         algorithm = "ASD"
 
-    image = cv2.imread("../Data/Images/boat.png")
+    image = cv2.imread("../Data/Images/pexels-photo-688018.jpeg")
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = cv2.normalize(image, image, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
 
@@ -29,8 +30,8 @@ def main():
     m, n = image.shape
 
     # Aproximación de rango bajo
-    rank = 30
-    low_rank_image = low_rank_approximation(image, rank)
+    rank = 50
+    low_rank_image = utils.low_rank_approximation(image, rank)
 
     # Máscara
     density = 0.3
@@ -41,12 +42,7 @@ def main():
     iter_max = 20000
     norm_tol = 1e-4
 
-    if algorithm == "users":
-        UserBased.set_data(masked_image)
-        UserBased.create_sets(100, 100)
-        similarity = SimilarityMeasures.mean_squared_difference
-        asd_image = UserBased.similarity_prediction(similarity, 100)
-    elif algorithm == "sASD":
+    if algorithm == "sASD":
         minimize = ASD.scaled_alternating_steepest_descent
         result = minimize(masked_image, rank, mask, iter_max, norm_tol)
         asd_image = result.matrix
@@ -58,6 +54,9 @@ def main():
     masked_image[:,:,1][masked_image[:,:,1] == 0] = 1.0
 
     path_prefix = "../Results/Noisy_Images/"
+
+    # Calcular error con imagen original
+    print("Error relativo", utils.relative_error(asd_image, image))
 
     # Normalizar imagenes
     normalize = functools.partial(cv2.normalize, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
