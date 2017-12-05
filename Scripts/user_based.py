@@ -12,6 +12,8 @@ class UserBased(object):
     similarity_matrix = None
     train_indexes = None
     test_indexes = None
+    train_mask = None
+    test_mask = None
 
     @classmethod
     def set_data(cls, data):
@@ -28,13 +30,18 @@ class UserBased(object):
         train_indexes = [[] for _ in range(cls.data.shape[0])]
         test_indexes = [[] for _ in range(cls.data.shape[0])]
 
+        cls.train_mask = np.zeros(cls.data.shape)
+        cls.test_mask = np.zeros(cls.data.shape)
+
         selected_indexes = np.random.choice(range(n), size=int(n*train_percentage/100), replace=False)
         for i, j in zip(nonzero[0][selected_indexes], nonzero[1][selected_indexes]):
             train_indexes[i].append(j)
+            cls.train_mask[i, j] = 1
 
         selected_indexes = np.random.choice(range(n), size=int(n*test_percentage/100), replace=False)
         for i, j in zip(nonzero[0][selected_indexes], nonzero[1][selected_indexes]):
             test_indexes[i].append(j)
+            cls.test_mask[i, j] = 1
 
         cls.train_indexes = train_indexes
         cls.test_indexes = test_indexes
