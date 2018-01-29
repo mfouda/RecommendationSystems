@@ -31,9 +31,9 @@ class constants:
     # densities = [0.1*t for t in range(1, 9)]
     # ranks = [10, 25, 50, 100, 150, 250]
 
-    densities = [0.4]
+    densities = [0.2, 0.3, 0.4, 0.5]
     ranks = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    real_ranks = [50]
+    real_ranks = [25, 50, 100, 200]
 
 def parse_args():
     default_image = "pexels-photo-462358.jpeg"
