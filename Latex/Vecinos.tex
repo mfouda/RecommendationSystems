@@ -1,0 +1,99 @@
+\section{Métodos basados en similitud de filas o columnas}
+
+\subsection{Promedios}
+Este método toma el promedio de los valores conocidos y los utiliza para predecir las entradas de $M$. Se pueden hacer 3 variantes:
+\begin{itemize}
+    \item Tomar el promedio de todos los valores conocidos y predecir $\hat M_{i, j} = \bar M$ para todo $i$ y todo $j$.
+    \item Tomar el promedio de valores conocidos por filas y predecir $\hat M_{i, j} = \bar M_i$ para todo $i$ y todo $j$.
+    \item Tomar el promedio de valores conocidos por columnas y predecir $\hat M_{i, j} = \bar M_{:,j}$ para todo $i$ y todo $j$.
+\end{itemize}
+
+\subsection{Basado en filas}
+Para predecir el valor de la entrada $(i, j)$ de la matriz, se obtiene una lista de las $r$ filas más parecidas a la fila $i$ y tomamos un promedio pesado de los valores $(k, j)$ de la siguiente manera:
+
+\begin{equation}
+    \label{eq:row_based}
+    \hat M_{i, j} = \frac{\sum_{k \in W(i)}\Sim(i, k) M_{k, j}}{\sum_{k \in W(i)} \Sim(i, k)},
+\end{equation}
+donde $W(i)$ es el conjunto de las $r$ filas más parecidas a $M_i$.
+
+\subsection{Basado en columnas}
+
+De manera análoga a la predicción basada en filas, se encuentran las $r$ columnas más parecidas a $M_{:,j}$ para predecir $M_{i, j}$
+\begin{equation}
+    \label{eq:col_based}
+    \hat M_{i, j} = \frac{\sum_{k \in W(j)}\Sim(j, k) M_{i, k}}{\sum_{k \in W(j)} \Sim(j, k)},
+\end{equation}
+donde $W(j)$ es el conjunto de las $k$ columnas más parecidos a $M_{:,j}$.
+
+\subsection{Medidas de similitud}~\label{sec:medidas_similitud}
+En las ecuaciones~\ref{eq:row_based}~y~\ref{eq:col_based} es necesaria una función de similitud entre filas o columnas. Algunas de las medidas usadas son las siguientes
+
+\begin{itemize}
+    \item Coeficiente de correlación de Pearson
+        \begin{equation*}
+            \Sim(x, y) = \frac{\sum_{i}^{}\left(x_i - \bar x \right) \left(y_i - \bar y \right)}{\sqrt{\sum_{i}^{} \left(x_i - \bar x\right)^2}\sqrt{\sum_{i}^{} \left(y_i - \bar y \right)^2}}
+        \end{equation*}
+    \item Similitud coseno
+        \begin{equation*}
+            \Sim(x, y) = \frac{x \cdot y}{\norm{x}_2 \norm{y}_2}
+        \end{equation*}
+    \item Mean absolute difference (*)
+        \begin{equation*}
+            \Sim(x, y) = \frac{1}{n}\sum_{i}^{} \abs{x_i - y_i}
+        \end{equation*}
+    \item Mean squared difference (*)
+        \begin{equation*}
+            \Sim(x, y) = \frac{1}{n}\sum_{i}^{} (x_i - y_i)^2
+        \end{equation*}
+\end{itemize}
+    
+Para utilizar estas medidas en las ecuaciones antes mencionadas, se toman los vectores que contienen únicamente los valores que son conocidos en ambas filas o en ambas columnas.
+
+En las medidas marcadas con (*) se utiliza la siguiente transformación para tomar valores únicamente en el intervalo $[0, 1]$.
+\begin{equation*}
+    f(x) = \frac{2}{1 + \exp(x)}
+\end{equation*}
+
+
+
+\subsection{Medidas de evaluación}
+Para evaluar cuáles han sido los mejores métodos, vamos a comparar los valores obtenidos con nuestros algoritmos contra los valores del conjunto de entrenamiento. Para esto, se pueden utilizar cualquiera de las siguientes medidas de evaluación
+\begin{itemize}
+    \item Root of the Mean Square Error (RMSE)
+        \begin{equation}
+            \RMSE = \sqrt{\frac{1}{n} \sum_{(i, j) \in \mathds{T}} (M_{i, j} - \hat M_{i, j})}
+        \end{equation}
+    \item Mean Absolute Error (MAE)
+        \begin{equation}
+            \MAE = \frac{1}{n} \sum_{(i, j) \in \mathds{T}} |M_{i, j} - \hat M_{i, j}|
+        \end{equation}
+\end{itemize}
+
+Donde $\mathds{T}$ representa el conjunto de pares de índices de los valores en el conjunto de prueba.
+
+\subsection{Detalles de implementación}
+Los algoritmos están implementados en Python. Los resultados mostrados se obtuvieron en una computadora con las siguientes características: 8vCPUs Intel Xeon E5 v3 (2.3 GHz), 52Gb de memoria RAM y Ubuntu 14.04 LTS.
+
+Para los métodos basados en similitud se utiliza la librería multiprocesing, que es nativa de Python, para paralelizar los cálculos de la matriz de similitud y predecir los valores utilizando las fórmulas~\ref{eq:row_based}~y~\ref{eq:col_based}.
+
+\subsection{Comparación de resultados}
+Utilizaremos la base de datos Netflix3m1k para hacer las pruebas de los algoritmos.
+
+Comenzaremos comparando los métodos basados en similitud de filas o columnas. Para esto, se hicieron pruebas cambiando los siguientes parámetros:
+\begin{itemize}
+    \item Número de vecinos: $\{10, 25, 50, 100\}$
+    \item Porcentaje del conjunto de entrenamiento: $\{30, 50, 70, 90\}$.
+    \item Porcentaje del conjunto de prueba: $\{10, 20, 30, 50\}$.
+    \item Medida de similitud: Se utilizaron todas las de la sección~\ref{sec:medidas_similitud}.
+\end{itemize}
+En la figura~\ref{fig:resultados_similitud} se muestran los resultados obtenidos. Las imágenes de la primera columna corresponden a los resultados obtenidos midiendo la similitud por filas (correspondientes a usuarios) y la segunda columna son los resultados obtenidos midiendo la similitud por columnas (correspondientes a películas). Cada una de las gráficas muestra el tiempo de ejecución en el eje $X$ y el error $\RMSE$ en el eje $Y$.
+
+Algunas de las conclusiones que podemos obtener de estas gráficas son las siguientes:
+\begin{itemize}
+    \item Los tiempos de ejecución dependen mucho más fuerte del número de vecinos que del porcentaje del conjunto de entrenamiento.
+    \item Para esta base de datos, se obtienen mejores resultados si utilizamos métodos basados en columnas.
+    \item La peor medida de similitud es la de coseno y las mejores son mean square difference y correlación de Pearson.
+
+        La línea punteada horizontal en las gráficas corresponde al valor del $\RMSE$ que se obtiene en promedio utilizando los métodos basados en promedios de la sección~\ref{sec:basados_en_promedios}. Notemos que únicamente a partir de utilizar 50 vecinos empezamos a tener resultados que mejoran este valor, sin embargo las mejoras son bastante significativas.
+\end{itemize}

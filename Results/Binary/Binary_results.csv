@@ -1,0 +1,5 @@
+Algorithm,Density,Real_rank,Approx_rank,Train_error,Test_error,Full_error,Time,Image,Shape
+Binary_nuclear,0.4,50,512,0.000188085301312,0.0331578104843,0.0650514973808,<module 'time' (built-in)>,pexels-photo-462358.jpeg,"(512, 512)"
+Binary_nuclear,0.5,50,512,0.000197475276603,0.0366137049616,0.0623850551817,<module 'time' (built-in)>,pexels-photo-462358.jpeg,"(512, 512)"
+Binary_nuclear,0.4,60,512,0.000206747809226,0.0338941603636,0.0617858273912,<module 'time' (built-in)>,pexels-photo-462358.jpeg,"(512, 512)"
+Binary_nuclear,0.5,60,512,0.000204052592639,0.0328708318316,0.0566316497973,<module 'time' (built-in)>,pexels-photo-462358.jpeg,"(512, 512)"

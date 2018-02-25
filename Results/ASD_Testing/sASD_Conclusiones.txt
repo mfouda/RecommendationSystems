@@ -1,0 +1,15 @@
+***** PowerBI hoja 1 *****
+
+Para matrices de rango bajo, los mejores resultados se obtienen cuando el rango propuesto es igual al rango real. Los resultados varían en forma de parábola conforme el rango propuesto se aleja del rango real. 
+
+Para matrices de rango alto, también se obtiene una parábola en función del rango propuesto, sin embargo esta no alcanza su mínimo en el rango real, sino en un rango más bajo alrededor de 50.
+
+Cuando la densidad es muy baja, los mejores resultados se obtienen con un rango propuesto bajo. (Ver con filtros de densidad 20 y rango real 50)
+
+Como se esperaba, mientras más densa es la imagen de entrada, mejores resultados se van a obtener.
+
+***** PowerBI hoja 2 *****
+
+Normalmente las ejecuciones que llegan a converger antes de llegar al límite de iteraciones son las que tienen rango real bajo.
+
+Para las ejecuciones que convergen, el tiempo de convergencia es lineal en función del número de iteraciones y el rango propuesto. Mientras mayor sea el rango propuesto, más tardan las ejecuciones.

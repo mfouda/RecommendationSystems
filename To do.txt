@@ -1,0 +1,15 @@
+MDS clusterización con distancias de filas/columnas de netflix.
+Búsqueda binaria.
+Distribución de error de rangos: Generar imágenes aleatorias con rango entre 25 y 200 y luego hacer la búsqueda binaria. Reportar los errores y la distribución de estos.
+
+--------------------------------------------------
+
+Ver parte teórica de distribución rango vs error.
+Buscar cotas para la estimación del rango. i.e. decir el rango está entre a y b.
+Ver formas de la distribución de suma de errores.
+
+Renne Bidal - Artículo de tensores
+
+Buscar algoritmos que busquen el rango que mejor aproxima la matriz.
+
+--------------------------------------------------

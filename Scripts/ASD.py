@@ -68,7 +68,6 @@ def alternating_steepest_descent(z0, rank, mask, max_iter, norm_tol, verbose=Fal
         print("Algoritmo: ASD")
         print("Tiempo:", asd_time)
         print("Iteraciones:", num_iter)
-        print("Error relativo:", residual)
 
     return result
 
