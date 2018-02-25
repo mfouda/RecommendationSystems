@@ -1,3 +1,0 @@
-Viendo la primera gráfica con el error de test, se ve que los rangos altos hacen un overfit a los datos.
-
-En la gráfica de iter vs rank se puede ver que las propuestas de rango bajo nunca van a converger por más iteraciones que se hagan.
